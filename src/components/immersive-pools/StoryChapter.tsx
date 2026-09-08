@@ -106,7 +106,7 @@ export function StoryChapter({
 
       {"showImage" in chapter && chapter.showImage ? (
         <figure
-          className="chapter-image fixed left-6 top-[16vh] w-[42vw] max-w-[360px] overflow-hidden border border-white/10 md:left-[6%] md:top-[20vh] md:w-[24vw]"
+          className="chapter-image fixed left-6 top-[16vh] w-[32vw] max-w-[270px] overflow-hidden border border-white/10 md:left-[6%] md:top-[20vh] md:w-[24vw]"
           aria-hidden={!active}
         >
           <img

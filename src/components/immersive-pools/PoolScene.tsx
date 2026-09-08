@@ -2,204 +2,223 @@ import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Suspense, useRef } from "react";
 import * as THREE from "three";
-import { PoolWater } from "./PoolWater";
 import { AtmosphericParticles } from "./AtmosphericParticles";
 import { CinematicCamera } from "./CinematicCamera";
 import { EXPERIENCE_CONFIG } from "./config";
-import { scrollState, damp } from "./scrollStore";
+import { PoolWater } from "./PoolWater";
+import { damp, scrollState } from "./scrollStore";
 
-const POOL_W = 9;
-const POOL_L = 20;
-const DEPTH = 1.6;
+export const POOL_W = 10;
+export const POOL_L = 5.5;
+const DEPTH = 1.45;
+const COPING_W = 0.46;
 
 function OptionalModel({ url }: { url: string }) {
   const { scene } = useGLTF(url);
   return <primitive object={scene} />;
 }
+const linerMaterial = <meshStandardMaterial color="#78cce2" roughness={0.56} metalness={0.02} />;
 
-function Lounger({ position, rotation }: { position: [number, number, number]; rotation: number }) {
+function PoolShell() {
+  const walls = [
+    { position: [-POOL_W / 2, -DEPTH / 2, 0], size: [0.08, DEPTH, POOL_L] },
+    { position: [POOL_W / 2, -DEPTH / 2, 0], size: [0.08, DEPTH, POOL_L] },
+    { position: [0, -DEPTH / 2, -POOL_L / 2], size: [POOL_W, DEPTH, 0.08] },
+    { position: [0, -DEPTH / 2, POOL_L / 2], size: [POOL_W, DEPTH, 0.08] },
+  ];
   return (
-    <group position={position} rotation-y={rotation}>
-      <mesh position={[0, 0.34, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.78, 0.1, 2.0]} />
-        <meshStandardMaterial color="#cfc7b8" roughness={0.75} />
+    <group>
+      <mesh rotation-x={-Math.PI / 2} position={[0, -DEPTH, 0]} receiveShadow>
+        <planeGeometry args={[POOL_W, POOL_L]} />
+        {linerMaterial}
       </mesh>
-      <mesh position={[0, 0.62, -0.78]} rotation-x={-0.55} castShadow>
-        <boxGeometry args={[0.78, 0.1, 0.9]} />
-        <meshStandardMaterial color="#cfc7b8" roughness={0.75} />
-      </mesh>
-      {[-0.3, 0.3].map((x) =>
-        [-0.8, 0.8].map((z) => (
-          <mesh key={`${x}-${z}`} position={[x, 0.15, z]} castShadow>
-            <boxGeometry args={[0.05, 0.3, 0.05]} />
-            <meshStandardMaterial color="#3a3a38" roughness={0.5} metalness={0.3} />
-          </mesh>
-        )),
-      )}
+      {walls.map((wall, index) => (
+        <mesh key={index} position={wall.position as [number, number, number]} receiveShadow>
+          <boxGeometry args={wall.size as [number, number, number]} />
+          {linerMaterial}
+        </mesh>
+      ))}
     </group>
   );
 }
-
-function Planting({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
+function PoolSteps() {
   return (
-    <group position={position} scale={scale}>
-      <mesh position={[0, 0.28, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.5, 0.56, 1.5]} />
-        <meshStandardMaterial color="#c9c1b2" roughness={0.9} />
-      </mesh>
-      {Array.from({ length: 7 }).map((_, i) => {
-        const a = (i / 7) * Math.PI * 2;
+    <group>
+      {[0, 1, 2].map((index) => {
+        const height = 0.24 + index * 0.28;
         return (
           <mesh
-            key={i}
-            position={[Math.cos(a) * 0.35, 0.95, Math.sin(a) * 0.35]}
-            rotation-z={Math.cos(a) * 0.25}
-            castShadow
+            key={index}
+            position={[0, -height / 2, -POOL_L / 2 + 0.52 * (index + 0.5)]}
+            receiveShadow
           >
-            <capsuleGeometry args={[0.06, 0.85, 4, 8]} />
-            <meshStandardMaterial color="#3d5c4a" roughness={0.85} />
+            <boxGeometry args={[7.5 - index * 0.35, height, 0.55]} />
+            <meshStandardMaterial color={index === 0 ? "#9adced" : "#86d2e6"} roughness={0.5} />
           </mesh>
         );
       })}
     </group>
   );
 }
-
-function ProceduralPool() {
-  const stone = "#d8d1c5";
-  const liner = "#0e5f70";
+function PoolCoping() {
+  const stone = <meshStandardMaterial color="#e8dfcf" roughness={0.88} metalness={0.01} />;
+  const pieces = [
+    {
+      position: [0, 0.03, -(POOL_L / 2 + COPING_W / 2)],
+      size: [POOL_W + COPING_W * 2, 0.16, COPING_W],
+    },
+    {
+      position: [0, 0.03, POOL_L / 2 + COPING_W / 2],
+      size: [POOL_W + COPING_W * 2, 0.16, COPING_W],
+    },
+    { position: [-(POOL_W / 2 + COPING_W / 2), 0.03, 0], size: [COPING_W, 0.16, POOL_L] },
+    { position: [POOL_W / 2 + COPING_W / 2, 0.03, 0], size: [COPING_W, 0.16, POOL_L] },
+  ];
   return (
-    <group>
-      {/* deck */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
-        <planeGeometry args={[70, 90]} />
-        <meshStandardMaterial color={stone} roughness={0.95} />
-      </mesh>
-      {/* pool basin: four inner walls + floor */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, -DEPTH, 0]} receiveShadow>
-        <planeGeometry args={[POOL_W, POOL_L]} />
-        <meshStandardMaterial color={liner} roughness={0.35} />
-      </mesh>
-      {[
-        { p: [-POOL_W / 2, -DEPTH / 2, 0], r: [0, Math.PI / 2, 0], s: [POOL_L, DEPTH] },
-        { p: [POOL_W / 2, -DEPTH / 2, 0], r: [0, -Math.PI / 2, 0], s: [POOL_L, DEPTH] },
-        { p: [0, -DEPTH / 2, -POOL_L / 2], r: [0, 0, 0], s: [POOL_W, DEPTH] },
-        { p: [0, -DEPTH / 2, POOL_L / 2], r: [0, Math.PI, 0], s: [POOL_W, DEPTH] },
-      ].map((w, i) => (
+    <>
+      {pieces.map((piece, index) => (
         <mesh
-          key={i}
-          position={w.p as [number, number, number]}
-          rotation={w.r as [number, number, number]}
+          key={index}
+          position={piece.position as [number, number, number]}
+          castShadow
           receiveShadow
         >
-          <planeGeometry args={w.s as [number, number]} />
-          <meshStandardMaterial color={liner} roughness={0.35} side={THREE.BackSide} />
+          <boxGeometry args={piece.size as [number, number, number]} />
+          {stone}
         </mesh>
       ))}
-      {/* coping edge */}
-      {[
-        { p: [-(POOL_W / 2 + 0.25), 0.06, 0], s: [0.5, 0.12, POOL_L + 1] },
-        { p: [POOL_W / 2 + 0.25, 0.06, 0], s: [0.5, 0.12, POOL_L + 1] },
-        { p: [0, 0.06, -(POOL_L / 2 + 0.25)], s: [POOL_W, 0.12, 0.5] },
-        { p: [0, 0.06, POOL_L / 2 + 0.25], s: [POOL_W, 0.12, 0.5] },
-      ].map((e, i) => (
-        <mesh key={i} position={e.p as [number, number, number]} castShadow receiveShadow>
-          <boxGeometry args={e.s as [number, number, number]} />
-          <meshStandardMaterial color="#e2dbcf" roughness={0.85} />
-        </mesh>
-      ))}
-
-      {/* house volume: slab + wall + columns */}
-      <group position={[-14, 0, 2]}>
-        <mesh position={[0, 3.3, 0]} castShadow receiveShadow>
-          <boxGeometry args={[12, 0.42, 22]} />
-          <meshStandardMaterial color="#cdc6b8" roughness={0.9} />
-        </mesh>
-        <mesh position={[-4.2, 1.65, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.4, 3.3, 22]} />
-          <meshStandardMaterial color="#d5cec1" roughness={0.92} />
-        </mesh>
-        {[-8, -2, 4, 9.5].map((z) => (
-          <mesh key={z} position={[4.6, 1.65, z]} castShadow>
-            <boxGeometry args={[0.22, 3.3, 0.22]} />
-            <meshStandardMaterial color="#2f3130" roughness={0.5} metalness={0.35} />
+    </>
+  );
+}
+function Shrub({ position, scale = 1 }: { position: [number, number, number]; scale?: number }) {
+  return (
+    <group position={position} scale={scale}>
+      {Array.from({ length: 5 }).map((_, index) => {
+        const angle = (index / 5) * Math.PI * 2;
+        return (
+          <mesh
+            key={index}
+            position={[Math.cos(angle) * 0.28, 0.42, Math.sin(angle) * 0.22]}
+            rotation-z={Math.cos(angle) * 0.32}
+            castShadow
+          >
+            <capsuleGeometry args={[0.09, 0.55, 4, 8]} />
+            <meshStandardMaterial color={index % 2 ? "#526c45" : "#3f5c3d"} roughness={0.92} />
           </mesh>
-        ))}
-      </group>
-
-      {/* low garden wall opposite the house */}
-      <mesh position={[15, 0.8, -1]} castShadow receiveShadow>
-        <boxGeometry args={[0.5, 1.6, 26]} />
-        <meshStandardMaterial color="#cfc7b8" roughness={0.95} />
-      </mesh>
-
-      <Lounger position={[-7.6, 0, -3.4]} rotation={Math.PI / 2} />
-      <Lounger position={[-7.6, 0, -0.6]} rotation={Math.PI / 2} />
-      <Planting position={[9.5, 0, -7.5]} />
-      <Planting position={[10.5, 0, 5.5]} scale={1.25} />
-      <Planting position={[-8.5, 0, 9]} scale={0.9} />
+        );
+      })}
     </group>
   );
 }
-
+function PrivacyFence() {
+  return (
+    <group position={[0, 0, -5.15]}>
+      {Array.from({ length: 11 }).map((_, index) => (
+        <mesh key={index} position={[0, 0.32 + index * 0.27, 0]} castShadow receiveShadow>
+          <boxGeometry args={[17.5, 0.18, 0.12]} />
+          <meshStandardMaterial color={index % 2 ? "#292d2c" : "#242827"} roughness={0.86} />
+        </mesh>
+      ))}
+      {[-8.55, -5.7, -2.85, 0, 2.85, 5.7, 8.55].map((x) => (
+        <mesh key={x} position={[x, 1.55, 0.05]} castShadow>
+          <boxGeometry args={[0.13, 3.2, 0.2]} />
+          <meshStandardMaterial color="#191d1d" roughness={0.8} />
+        </mesh>
+      ))}
+      {[-7, -4.8, -2.6, -0.4, 1.8, 4, 6.3].map((x, index) => (
+        <Shrub key={x} position={[x, 0, 0.38]} scale={0.78 + (index % 2) * 0.12} />
+      ))}
+    </group>
+  );
+}
+function Planter() {
+  return (
+    <group position={[-5.9, 0, 3.25]}>
+      <mesh position={[0, 0.38, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.48, 0.58, 0.76, 8]} />
+        <meshStandardMaterial color="#303535" roughness={0.72} />
+      </mesh>
+      {Array.from({ length: 7 }).map((_, index) => {
+        const angle = (index / 7) * Math.PI * 2;
+        return (
+          <mesh
+            key={index}
+            position={[Math.cos(angle) * 0.18, 1.05, Math.sin(angle) * 0.18]}
+            rotation-z={Math.cos(angle) * 0.3}
+            castShadow
+          >
+            <capsuleGeometry args={[0.045, 0.8, 4, 7]} />
+            <meshStandardMaterial color="#526b42" roughness={0.9} />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+function ProceduralPool() {
+  return (
+    <group>
+      <mesh rotation-x={-Math.PI / 2} position={[0, -0.09, 0]} receiveShadow>
+        <planeGeometry args={[25, 18]} />
+        <meshStandardMaterial color="#5f8a42" roughness={1} />
+      </mesh>
+      <PoolShell />
+      <PoolSteps />
+      <PoolCoping />
+      <PrivacyFence />
+      <Planter />
+      <Shrub position={[5.9, 0, 3.3]} scale={1.05} />
+    </group>
+  );
+}
 function CinematicLighting() {
   const sun = useRef<THREE.DirectionalLight>(null);
-  const cool = useRef<THREE.PointLight>(null);
-  const amb = useRef<THREE.AmbientLight>(null);
-  const rim = useRef<THREE.DirectionalLight>(null);
-  const sunColor = useRef(new THREE.Color("#3b5c6b"));
-  const warm = new THREE.Color("#ffbb70");
-  const dawn = new THREE.Color("#4a6f80");
-
+  const fill = useRef<THREE.AmbientLight>(null);
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    const s = scrollState.smooth;
-    const reveal = Math.min(s * 6, 1); // opening fade-in
-    const warmth = Math.pow(s, 1.3);
-    if (sun.current) {
-      sun.current.intensity = damp(sun.current.intensity, 0.25 + reveal * (0.6 + warmth * 1.5), 2, dt);
-      sunColor.current.lerpColors(dawn, warm, warmth);
-      sun.current.color.copy(sunColor.current);
-      sun.current.position.set(-18 + warmth * 46, 22 - warmth * 15, 14 - warmth * 30);
-    }
-    if (amb.current) amb.current.intensity = damp(amb.current.intensity, 0.06 + reveal * 0.42, 2, dt);
-    if (cool.current) cool.current.intensity = damp(cool.current.intensity, 0.5 + (1 - warmth) * 1.1, 2, dt);
-    if (rim.current) rim.current.intensity = damp(rim.current.intensity, 0.25 + warmth * 0.5, 2, dt);
+    const reveal = Math.min(scrollState.smooth * 6, 1);
+    if (sun.current)
+      sun.current.intensity = damp(sun.current.intensity, 1.55 + reveal * 0.45, 2, dt);
+    if (fill.current)
+      fill.current.intensity = damp(fill.current.intensity, 0.55 + reveal * 0.12, 2, dt);
   });
-
   return (
     <>
-      <ambientLight ref={amb} intensity={0.05} color="#9fc6cf" />
+      <ambientLight ref={fill} intensity={0.55} color="#d9efff" />
+      <hemisphereLight args={["#bfe7ff", "#6d8358", 0.48]} />
       <directionalLight
         ref={sun}
-        position={[-18, 22, 14]}
-        intensity={0.2}
+        position={[-10, 16, 10]}
+        intensity={1.6}
+        color="#fff4df"
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
-        shadow-camera-left={-32}
-        shadow-camera-right={32}
-        shadow-camera-top={32}
-        shadow-camera-bottom={-32}
+        shadow-camera-left={-14}
+        shadow-camera-right={14}
+        shadow-camera-top={14}
+        shadow-camera-bottom={-14}
         shadow-bias={-0.0004}
       />
-      <pointLight ref={cool} position={[0, 1.2, 0]} distance={26} decay={1.6} color="#19c2bb" intensity={0.6} />
-      <directionalLight ref={rim} position={[6, 4, -22]} intensity={0.3} color="#82e4df" />
-      <Environment resolution={256}>
-        <Lightformer intensity={1.4} position={[0, 8, 0]} scale={[18, 18, 1]} rotation-x={Math.PI / 2} color="#8fb6c2" />
-        <Lightformer intensity={0.7} position={[-10, 3, 6]} rotation-y={Math.PI / 2} scale={[24, 4, 1]} color="#d8d1c5" />
-        <Lightformer intensity={0.6} position={[12, 2, -6]} rotation-y={-Math.PI / 2} scale={[24, 3, 1]} color="#0b7084" />
+      <Environment resolution={128}>
+        <Lightformer
+          intensity={1.15}
+          position={[0, 9, 2]}
+          scale={[16, 12, 1]}
+          rotation-x={Math.PI / 2}
+          color="#b9e7ff"
+        />
+        <Lightformer intensity={0.35} position={[0, 4, -7]} scale={[14, 3, 1]} color="#fff5df" />
       </Environment>
     </>
   );
 }
-
 export function PoolScene() {
   const modelUrl = EXPERIENCE_CONFIG.model.url;
   return (
     <>
-      <color attach="background" args={[EXPERIENCE_CONFIG.palette.background]} />
-      <fogExp2 attach="fog" args={[EXPERIENCE_CONFIG.palette.deepBlue, 0.016]} />
+      <color attach="background" args={["#bfe7ff"]} />
+      <fogExp2 attach="fog" args={["#cfeeff", 0.004]} />
       <CinematicLighting />
       <CinematicCamera />
       {modelUrl ? (

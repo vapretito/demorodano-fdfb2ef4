@@ -5,19 +5,19 @@ import { scrollState, damp } from "./scrollStore";
 
 /** Four chapter keyframes describing one ~230 degree cinematic orbit. */
 const PATH = [
-  new THREE.Vector3(11, 2.0, 15),
-  new THREE.Vector3(17, 4.6, 3),
-  new THREE.Vector3(7.4, 1.15, -12),
-  new THREE.Vector3(-9, 7.2, -19),
-  new THREE.Vector3(-21, 11.5, -7),
+  new THREE.Vector3(9.5, 2.7, 8.2),
+  new THREE.Vector3(13, 4.2, 4.5),
+  new THREE.Vector3(4.5, 2.1, -10),
+  new THREE.Vector3(-9, 6.2, -12),
+  new THREE.Vector3(-16, 8.5, -4),
 ];
 
 const TARGETS = [
-  new THREE.Vector3(0.5, 0.1, 5),
-  new THREE.Vector3(0, 0.15, 0.5),
-  new THREE.Vector3(0.4, 0.1, 3),
-  new THREE.Vector3(-2, 0.4, 1),
-  new THREE.Vector3(-3.5, 1.2, 1),
+  new THREE.Vector3(0, -0.1, 0),
+  new THREE.Vector3(0, -0.15, 0),
+  new THREE.Vector3(0, -0.1, -0.8),
+  new THREE.Vector3(-1, 0.25, -0.8),
+  new THREE.Vector3(-2, 0.7, 0),
 ];
 
 export function CinematicCamera() {
