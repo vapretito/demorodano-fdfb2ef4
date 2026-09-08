@@ -7,7 +7,7 @@ import projectImage01 from "@/assets/pileta-proyecto-01.jpg";
  */
 export const EXPERIENCE_CONFIG = {
   brand: {
-    name: "Estudio Albera",
+    name: "Rodano",
     tagline: "Piletas de autor",
     logo: "", // optional image URL; falls back to the wordmark
     accent: "#19C2BB",
@@ -16,7 +16,7 @@ export const EXPERIENCE_CONFIG = {
   contact: {
     label: "Cotizar proyecto",
     ctaLabel: "Solicitar cotización",
-    whatsapp: "5491100000000",
+    whatsapp: "543516641124",
     message:
       "Hola, quiero cotizar el diseño y construcción de una pileta para mi casa.",
   },
