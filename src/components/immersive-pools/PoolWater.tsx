@@ -66,6 +66,15 @@ varying vec3 vNormalW;
 varying vec2 vUv;
 varying float vWave;
 
+// ACES filmic approximation + sRGB encode (raw ShaderMaterial does not get
+// the renderer's automatic tonemapping/colorspace chunks).
+vec3 aces(vec3 x) {
+  return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
+}
+vec3 toSRGB(vec3 x) {
+  return mix(x * 12.92, 1.055 * pow(max(x, vec3(0.0001)), vec3(1.0 / 2.4)) - 0.055, step(0.0031308, x));
+}
+
 void main() {
   vec3 n = normalize(vNormalW);
   vec3 viewDir = normalize(cameraPosition - vWorldPos);
@@ -95,9 +104,7 @@ void main() {
   col += mix(uAqua, uWarmLight, uWarm) * spec * (0.35 + uWarm * 0.5);
 
   col *= uBright;
-  gl_FragColor = vec4(col, 1.0);
-  #include <tonemapping_fragment>
-  #include <colorspace_fragment>
+  gl_FragColor = vec4(toSRGB(aces(col)), 1.0);
 }
 `;
 
