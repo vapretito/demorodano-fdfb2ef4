@@ -162,8 +162,8 @@ function CinematicLighting() {
       sun.current.color.copy(sunColor.current);
       sun.current.position.set(-18 + warmth * 46, 22 - warmth * 15, 14 - warmth * 30);
     }
-    if (amb.current) amb.current.intensity = damp(amb.current.intensity, 0.06 + reveal * 0.28, 2, dt);
-    if (cool.current) cool.current.intensity = damp(cool.current.intensity, 1.2 + (1 - warmth) * 2.4, 2, dt);
+    if (amb.current) amb.current.intensity = damp(amb.current.intensity, 0.06 + reveal * 0.42, 2, dt);
+    if (cool.current) cool.current.intensity = damp(cool.current.intensity, 0.5 + (1 - warmth) * 1.1, 2, dt);
     if (rim.current) rim.current.intensity = damp(rim.current.intensity, 0.25 + warmth * 0.5, 2, dt);
   });
 
@@ -183,7 +183,7 @@ function CinematicLighting() {
         shadow-camera-bottom={-32}
         shadow-bias={-0.0004}
       />
-      <pointLight ref={cool} position={[0, 1.2, 0]} distance={26} decay={1.6} color="#19c2bb" intensity={1.4} />
+      <pointLight ref={cool} position={[0, 1.2, 0]} distance={26} decay={1.6} color="#19c2bb" intensity={0.6} />
       <directionalLight ref={rim} position={[6, 4, -22]} intensity={0.3} color="#82e4df" />
       <Environment resolution={256}>
         <Lightformer intensity={1.4} position={[0, 8, 0]} scale={[18, 18, 1]} rotation-x={Math.PI / 2} color="#8fb6c2" />

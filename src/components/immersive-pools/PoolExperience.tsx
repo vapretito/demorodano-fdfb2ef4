@@ -28,7 +28,7 @@ function supportsWebGL() {
 }
 
 export function PoolExperience() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(-1);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [webgl, setWebgl] = useState(true);
@@ -141,7 +141,7 @@ export function PoolExperience() {
             camera={{ position: [11, 2, 15], fov: 42, near: 0.1, far: 300 }}
             onCreated={({ gl }) => {
               gl.toneMapping = THREE.ACESFilmicToneMapping;
-              gl.toneMappingExposure = 0.92;
+              gl.toneMappingExposure = 1.0;
             }}
           >
             <Suspense fallback={null}>

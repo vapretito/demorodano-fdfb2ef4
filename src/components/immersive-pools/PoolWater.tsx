@@ -85,9 +85,9 @@ void main() {
   vec3 base = mix(uShallow, uDeep, centre * 0.85);
 
   // caustic-style moving light bands
-  float c = sin(vWorldPos.x * 2.2 + uTime * 0.45) * sin(vWorldPos.z * 2.7 - uTime * 0.35);
-  c += sin(vWorldPos.x * 4.4 - uTime * 0.7) * 0.5;
-  float caustic = smoothstep(0.55, 1.4, c + 0.6) * 0.22;
+  float c = sin(vWorldPos.x * 6.5 + uTime * 0.5) * sin(vWorldPos.z * 7.3 - uTime * 0.4);
+  c += sin((vWorldPos.x + vWorldPos.z) * 11.0 - uTime * 0.8) * 0.45;
+  float caustic = smoothstep(0.6, 1.35, c + 0.55) * 0.14;
 
   vec3 col = base + uAqua * caustic * (0.5 + centre * 0.6);
 
