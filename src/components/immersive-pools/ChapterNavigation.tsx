@@ -1,6 +1,6 @@
 import { EXPERIENCE_CONFIG, whatsappHref, SCROLL_VH } from "./config";
 
-export function ChapterNavigation({ active }: { active: number }) {
+export function ChapterNavigation({ active, progress }: { active: number; progress: number }) {
   const { brand, contact, chapters } = EXPERIENCE_CONFIG;
 
   const goToChapter = (index: number) => {
@@ -69,11 +69,11 @@ export function ChapterNavigation({ active }: { active: number }) {
             title={`${SCROLL_VH}vh`}
           >
             <span
-              className="block w-full origin-top bg-[color:var(--turquoise)] transition-transform duration-500 ease-out"
+              className="block w-full origin-top bg-[color:var(--turquoise)]"
               style={{
                 height: "100%",
-                transform: `scaleY(${i < active ? 1 : i === active ? 1 : 0})`,
-                opacity: i === active ? 1 : i < active ? 0.5 : 0,
+                transform: `scaleY(${Math.max(0, Math.min(1, (progress - i * 0.25) / 0.25))})`,
+                opacity: i === active ? 1 : 0.45,
               }}
             />
           </span>
