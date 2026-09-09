@@ -7,18 +7,16 @@ import projectImage01 from "@/assets/pileta-proyecto-01.jpg";
  */
 export const EXPERIENCE_CONFIG = {
   brand: {
-    name: "Rodano",
-    tagline: "Piletas de autor",
+    name: "GMV",
+    tagline: "Construcción & desarrollo",
     logo: "", // optional image URL; falls back to the wordmark
     accent: "#19C2BB",
   },
 
   contact: {
-    label: "Cotizar proyecto",
-    ctaLabel: "Solicitar cotización",
-    whatsapp: "543516641124",
-    message:
-      "Hola, quiero cotizar el diseño y construcción de una pileta para mi casa.",
+    label: "Conocé GMV",
+    ctaLabel: "Ver GMV Construcción",
+    instagram: "https://www.instagram.com/gmv.construccion/",
   },
 
   model: {
@@ -32,7 +30,7 @@ export const EXPERIENCE_CONFIG = {
   },
 
   intro: {
-    title: ["Diseñamos el lugar", "donde empieza el verano."],
+    title: ["Construimos espacios", "para vivirlos."],
     hint: "Desplazá para recorrer el proyecto",
   },
 
@@ -50,43 +48,42 @@ export const EXPERIENCE_CONFIG = {
     {
       id: "proyecto",
       nav: "PROYECTO",
-      eyebrow: "01 — Experiencia",
-      title: ["Tu pileta,", "tu lugar."],
+      eyebrow: "01 — Construcción",
+      title: ["De una idea", "a un proyecto."],
       body: [
-        "No construimos solamente una pileta. Diseñamos el espacio donde vas a pasar tus mejores días.",
-        "Cada proyecto se adapta al terreno, la arquitectura y la forma en la que querés vivir tu casa.",
+        "En GMV convertimos cada idea en un proyecto pensado para la forma en que querés vivir.",
+        "Arquitectura, obra y terminaciones se integran desde el primer plano.",
       ],
       position: "lower-left" as const,
     },
     {
       id: "diseno",
-      nav: "DISEÑO",
-      eyebrow: "02 — Diseño",
-      title: ["Diseñada", "para tu espacio."],
+      nav: "PROCESO",
+      eyebrow: "02 — Cada etapa",
+      title: ["Cuidamos", "cada paso."],
       body: [
-        "Dimensiones, profundidad, terminaciones y circulación se proyectan alrededor de tu casa, no desde un modelo genérico.",
+        "Acompañamos el proceso completo: proyecto, planificación, ejecución y entrega de tu obra.",
       ],
       position: "left-column" as const,
-      showImage: true,
     },
     {
       id: "materiales",
-      nav: "MATERIALES",
-      eyebrow: "03 — Materiales",
-      title: ["Agua,", "luz y materia."],
+      nav: "DESARROLLO",
+      eyebrow: "03 — Diseño y detalle",
+      title: ["Diseñamos y", "desarrollamos."],
       body: [
-        "Revestimientos, bordes, iluminación y paisajismo trabajan juntos para transformar la pileta en parte de la arquitectura.",
+        "Materiales, proporciones y detalles constructivos trabajan juntos para lograr espacios durables y contemporáneos.",
       ],
-      labels: ["REVESTIMIENTOS", "ILUMINACIÓN", "BORDE", "PAISAJISMO"],
+      labels: ["PROYECTO", "DIRECCIÓN DE OBRA", "CONSTRUCCIÓN", "TERMINACIONES"],
       position: "right" as const,
     },
     {
       id: "contacto",
       nav: "CONTACTO",
-      eyebrow: "04 — Contacto",
-      title: ["Construimos", "tu próximo verano."],
+      eyebrow: "04 — GMV Construcción",
+      title: ["Construir puede", "ser simple."],
       body: [
-        "Contanos qué espacio tenés y te ayudamos a transformar la idea en un proyecto real.",
+        "Conocé nuestros proyectos y el proceso que transforma una idea en tu próximo espacio.",
       ],
       position: "left-column" as const,
       showCta: true,
@@ -96,10 +93,7 @@ export const EXPERIENCE_CONFIG = {
 
 export type Chapter = (typeof EXPERIENCE_CONFIG)["chapters"][number];
 
-export const whatsappHref = () => {
-  const { whatsapp, message } = EXPERIENCE_CONFIG.contact;
-  return `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
-};
+export const contactHref = () => EXPERIENCE_CONFIG.contact.instagram;
 
 /** Total scroll distance of the experience, in viewport heights. */
-export const SCROLL_VH = 800;
+export const SCROLL_VH = 650;

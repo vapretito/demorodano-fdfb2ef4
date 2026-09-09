@@ -1,4 +1,4 @@
-import { EXPERIENCE_CONFIG, whatsappHref, SCROLL_VH } from "./config";
+import { contactHref, EXPERIENCE_CONFIG, SCROLL_VH } from "./config";
 
 export function ChapterNavigation({ active, progress }: { active: number; progress: number }) {
   const { brand, contact, chapters } = EXPERIENCE_CONFIG;
@@ -11,7 +11,7 @@ export function ChapterNavigation({ active, progress }: { active: number; progre
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 flex h-[86px] items-center justify-between px-6 md:px-10">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-[86px] items-center justify-between bg-gradient-to-b from-[#071012]/80 via-[#071012]/35 to-transparent px-6 md:px-10">
         <a
           href="#proyecto"
           onClick={(e) => {
@@ -36,7 +36,7 @@ export function ChapterNavigation({ active, progress }: { active: number; progre
                 onClick={() => goToChapter(i)}
                 aria-current={active === i ? "true" : undefined}
                 className={`focus-ring font-body text-[10px] uppercase tracking-[0.32em] transition-colors duration-500 ${
-                  active === i ? "text-[color:var(--turquoise)]" : "text-white/45 hover:text-white/80"
+                  active === i ? "text-[color:var(--aqua)]" : "text-white/85 hover:text-white"
                 }`}
               >
                 {chapter.nav}
@@ -46,10 +46,10 @@ export function ChapterNavigation({ active, progress }: { active: number; progre
         </nav>
 
         <a
-          href={whatsappHref()}
+          href={contactHref()}
           target="_blank"
           rel="noreferrer"
-          aria-label={`${contact.label} por WhatsApp`}
+          aria-label={`${contact.label} en Instagram`}
           className="focus-ring group flex items-center gap-2 rounded-full bg-[color:var(--white)] px-4 py-2 font-body text-[9px] uppercase tracking-[0.28em] text-[#071012] transition-transform duration-300 hover:scale-[1.04] md:px-5 md:text-[10px]"
         >
           {contact.label}

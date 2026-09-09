@@ -3,21 +3,21 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { scrollState, damp } from "./scrollStore";
 
-/** Four chapter keyframes describing one ~230 degree cinematic orbit. */
+/** A wide orbit that keeps the centered home legible from every side. */
 const PATH = [
-  new THREE.Vector3(9.5, 2.7, 8.2),
-  new THREE.Vector3(13, 4.2, 4.5),
-  new THREE.Vector3(4.5, 2.1, -10),
-  new THREE.Vector3(-9, 6.2, -12),
-  new THREE.Vector3(-16, 8.5, -4),
+  new THREE.Vector3(14, 6.8, 15),
+  new THREE.Vector3(18, 9, 7),
+  new THREE.Vector3(7, 6.5, -16),
+  new THREE.Vector3(-13.5, 10, -16),
+  new THREE.Vector3(-19, 12, 4),
 ];
 
 const TARGETS = [
-  new THREE.Vector3(0, -0.1, 0),
-  new THREE.Vector3(0, -0.15, 0),
-  new THREE.Vector3(0, -0.1, -0.8),
-  new THREE.Vector3(-1, 0.25, -0.8),
-  new THREE.Vector3(-2, 0.7, 0),
+  new THREE.Vector3(0, 4.15, 0.5),
+  new THREE.Vector3(0, 4.85, 0.25),
+  new THREE.Vector3(0, 3.85, 0),
+  new THREE.Vector3(0, 4.9, 0),
+  new THREE.Vector3(0, 4.65, 0.2),
 ];
 
 export function CinematicCamera() {

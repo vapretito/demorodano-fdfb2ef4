@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import Lenis from "lenis";
 import * as THREE from "three";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { EXPERIENCE_CONFIG, SCROLL_VH } from "./config";
@@ -18,6 +19,9 @@ const WINDOWS: [number, number][] = [
   [0.785, 1.01],
 ];
 
+// The procedural 3D scene is the active visual layer.
+const SHOW_3D_RENDER = true;
+
 function supportsWebGL() {
   try {
     const canvas = document.createElement("canvas");
@@ -33,6 +37,7 @@ export function PoolExperience() {
   const [ready, setReady] = useState(false);
   const [webgl, setWebgl] = useState(true);
   const [reduced, setReduced] = useState(false);
+  const [desktop, setDesktop] = useState(false);
   const [intro, setIntro] = useState(true);
 
   useEffect(() => {
@@ -50,6 +55,40 @@ export function PoolExperience() {
       window.clearTimeout(t);
     };
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setDesktop(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    // Touch remains native. Lenis only normalizes desktop wheel input; the
+    // frame sequence continues to consume the resulting native scroll values.
+    if (!desktop || reduced) return;
+
+    const lenis = new Lenis({
+      autoRaf: false,
+      lerp: 0.08,
+      wheelMultiplier: 0.8,
+      smoothWheel: true,
+      syncTouch: false,
+    });
+    let raf = 0;
+
+    const animate = (time: number) => {
+      lenis.raf(time);
+      raf = requestAnimationFrame(animate);
+    };
+
+    raf = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(raf);
+      lenis.destroy();
+    };
+  }, [desktop, reduced]);
 
   useEffect(() => {
     document.documentElement.classList.add("immersive");
@@ -128,10 +167,11 @@ export function PoolExperience() {
   return (
     <main className="relative">
       <h1 className="sr-only">
-        {EXPERIENCE_CONFIG.brand.name} — diseño, construcción e instalación de piletas
+        {EXPERIENCE_CONFIG.brand.name} — construcción y desarrollo de proyectos
       </h1>
 
-      {/* fixed WebGL layer */}
+      {/* Active 3D render. */}
+      {SHOW_3D_RENDER ? (
       <div className="fixed inset-0 z-0 h-screen w-screen fallback-scene" aria-hidden>
         {webgl ? (
           <Canvas
@@ -150,6 +190,7 @@ export function PoolExperience() {
           </Canvas>
         ) : null}
       </div>
+      ) : null}
 
       {/* atmospheric vignette + opening darkness */}
       <div
@@ -171,6 +212,7 @@ export function PoolExperience() {
         className="chapter fixed left-6 top-1/2 z-30 -translate-y-1/2 md:left-[6%]"
         data-active={intro ? "true" : "false"}
       >
+        <span className="chapter-panel" aria-hidden />
         <h2 className="font-display text-[clamp(2.2rem,6vw,4.6rem)] leading-[1.02] text-[color:var(--white)]">
           {EXPERIENCE_CONFIG.intro.title.map((line, i) => (
             <span key={line} className="block">
@@ -186,7 +228,7 @@ export function PoolExperience() {
             </span>
           ))}
         </h2>
-        <p className="chapter-body mt-8 font-body text-[10px] uppercase tracking-[0.4em] text-white/40">
+        <p className="chapter-body mt-8 font-body text-[10px] uppercase tracking-[0.4em] text-white/80">
           {EXPERIENCE_CONFIG.intro.hint}
         </p>
       </div>

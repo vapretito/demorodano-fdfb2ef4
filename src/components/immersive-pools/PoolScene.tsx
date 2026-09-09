@@ -1,15 +1,19 @@
 import { Environment, Lightformer, useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { Suspense, useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { AtmosphericParticles } from "./AtmosphericParticles";
 import { CinematicCamera } from "./CinematicCamera";
+import { ContemporaryHome } from "./ContemporaryHome";
 import { EXPERIENCE_CONFIG } from "./config";
 import { PoolWater } from "./PoolWater";
 import { damp, scrollState } from "./scrollStore";
 
 export const POOL_W = 10;
 export const POOL_L = 5.5;
+// Temporary presentation mode: focus the experience on the home model.
+// Set this back to true when the pool should return to the scene.
+const SHOW_POOL = false;
 const DEPTH = 1.45;
 const COPING_W = 0.46;
 
@@ -213,22 +217,52 @@ function CinematicLighting() {
     </>
   );
 }
+
+/** Daylight changes subtly through the construction story rather than staying flat blue. */
+function DynamicBackdrop() {
+  const scene = useThree((state) => state.scene);
+  const fog = useRef<THREE.FogExp2>(null);
+  const background = useMemo(() => new THREE.Color("#d6e7eb"), []);
+  const target = useMemo(() => new THREE.Color(), []);
+  const palette = useMemo(
+    () => [
+      new THREE.Color("#d6e7eb"), // architectural morning blue
+      new THREE.Color("#e7dfd2"), // warm plaster and stone
+      new THREE.Color("#b8c7c2"), // concrete and landscape
+      new THREE.Color("#344447"), // graphite finish
+    ],
+    [],
+  );
+
+  useFrame((_, delta) => {
+    const progress = Math.min(Math.max(scrollState.smooth, 0), 1);
+    const stage = Math.min(Math.floor(progress * 3), 2);
+    const local = (progress - stage / 3) * 3;
+    target.copy(palette[stage]).lerp(palette[stage + 1], local);
+    background.lerp(target, 1 - Math.exp(-Math.min(delta, 0.05) * 1.4));
+    scene.background = background;
+    if (fog.current) fog.current.color.copy(background);
+  });
+
+  return <fogExp2 ref={fog} args={["#d6e7eb", 0.012]} />;
+}
+
 export function PoolScene() {
   const modelUrl = EXPERIENCE_CONFIG.model.url;
   return (
     <>
-      <color attach="background" args={["#bfe7ff"]} />
-      <fogExp2 attach="fog" args={["#cfeeff", 0.004]} />
+      <DynamicBackdrop />
       <CinematicLighting />
       <CinematicCamera />
       {modelUrl ? (
         <Suspense fallback={null}>
           <OptionalModel url={modelUrl} />
         </Suspense>
-      ) : (
+      ) : SHOW_POOL ? (
         <ProceduralPool />
-      )}
-      <PoolWater width={POOL_W} length={POOL_L} />
+      ) : null}
+      {!modelUrl && <ContemporaryHome />}
+      {SHOW_POOL && <PoolWater width={POOL_W} length={POOL_L} />}
       <AtmosphericParticles />
     </>
   );

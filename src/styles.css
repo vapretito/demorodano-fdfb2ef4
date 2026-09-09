@@ -173,9 +173,15 @@ html.has-custom-cursor * {
 
 .fallback-scene {
   background:
-    radial-gradient(60% 45% at 50% 55%, rgba(25, 194, 187, 0.22), transparent 70%),
-    radial-gradient(90% 40% at 50% 92%, rgba(216, 209, 197, 0.14), transparent 75%),
-    var(--deep);
+    radial-gradient(68% 55% at 50% 52%, rgba(255, 247, 231, 0.38), transparent 70%),
+    linear-gradient(125deg, #d6e7eb, #e7dfd2, #b8c7c2, #344447);
+  background-size: 100% 100%, 320% 320%;
+  animation: backdrop-shift 20s ease-in-out infinite alternate;
+}
+
+@keyframes backdrop-shift {
+  from { background-position: center, 0% 50%; }
+  to { background-position: center, 100% 50%; }
 }
 
 .focus-ring:focus-visible {
@@ -184,6 +190,29 @@ html.has-custom-cursor * {
 }
 
 /* chapter reveal */
+.chapter {
+  isolation: isolate;
+  text-shadow: 0 2px 14px rgba(2, 10, 12, 0.98), 0 0 2px rgba(2, 10, 12, 0.8);
+}
+
+.chapter-panel {
+  position: absolute;
+  inset: -0.9rem -1.35rem;
+  z-index: -1;
+  border-left: 1px solid rgba(154, 231, 223, 0.55);
+  background: linear-gradient(105deg, rgba(4, 15, 18, 0.66), rgba(4, 15, 18, 0.3));
+  opacity: 0;
+  transform: translateY(12px) scaleY(0.94);
+  transform-origin: left bottom;
+  transition: opacity 0.5s ease-out, transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.chapter[data-active="true"] .chapter-panel {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
+}
+
 .chapter .char {
   opacity: 0;
   filter: blur(9px);
@@ -301,6 +330,14 @@ html.has-custom-cursor * {
   .grid-dot-h {
     animation: none;
     opacity: 0.3;
+  }
+
+  .chapter-panel {
+    transition-duration: 0.25s;
+  }
+
+  .fallback-scene {
+    animation: none;
   }
 }
 

@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PoolExperience } from "@/components/immersive-pools/PoolExperience";
 import { EXPERIENCE_CONFIG } from "@/components/immersive-pools/config";
 
-const title = `${EXPERIENCE_CONFIG.brand.name} — Diseño y construcción de piletas`;
+const title = `${EXPERIENCE_CONFIG.brand.name} — Construcción y desarrollo`;
 const description =
-  "Estudio de diseño, construcción e instalación de piletas de autor. Proyectamos el agua como parte de la arquitectura de tu casa.";
+  "GMV Construcción: proyecto, dirección de obra, construcción y terminaciones para espacios contemporáneos.";
 
 export const Route = createFileRoute("/")({
   ssr: false,

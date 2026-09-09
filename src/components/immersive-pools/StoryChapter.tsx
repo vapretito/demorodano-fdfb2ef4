@@ -1,4 +1,4 @@
-import { EXPERIENCE_CONFIG, whatsappHref, type Chapter } from "./config";
+import { contactHref, EXPERIENCE_CONFIG, type Chapter } from "./config";
 
 const POSITION: Record<string, string> = {
   "lower-left": "left-6 bottom-[12vh] md:left-[6%] md:bottom-[14vh] max-w-[86vw] md:max-w-[42vw]",
@@ -59,7 +59,8 @@ export function StoryChapter({
         active ? "pointer-events-auto" : "pointer-events-none"
       }`}
     >
-      <p className="chapter-eyebrow font-body text-[10px] uppercase tracking-[0.4em] text-[color:var(--aqua)]/60">
+      <span className="chapter-panel" aria-hidden />
+      <p className="chapter-eyebrow font-body text-[10px] uppercase tracking-[0.4em] text-[color:var(--aqua)]">
         {chapter.eyebrow}
       </p>
       <div className="mt-4">
@@ -69,7 +70,7 @@ export function StoryChapter({
         {chapter.body.map((paragraph, i) => (
           <p
             key={paragraph}
-            className={`font-body max-w-[34ch] text-[13px] font-light leading-relaxed text-white/60 md:text-[14px] ${
+            className={`font-body max-w-[34ch] text-[13px] font-light leading-relaxed text-white/85 md:text-[14px] ${
               i > 0 ? "hidden short:hidden sm:block" : ""
             }`}
           >
@@ -83,7 +84,7 @@ export function StoryChapter({
           {chapter.labels.map((label) => (
             <li
               key={label}
-              className="font-body text-[9px] uppercase tracking-[0.34em] text-white/35"
+              className="font-body text-[9px] uppercase tracking-[0.34em] text-white/70"
             >
               {label}
             </li>
@@ -93,10 +94,10 @@ export function StoryChapter({
 
       {"showCta" in chapter && chapter.showCta ? (
         <a
-          href={whatsappHref()}
+          href={contactHref()}
           target="_blank"
           rel="noreferrer"
-          aria-label={`${EXPERIENCE_CONFIG.contact.ctaLabel} por WhatsApp`}
+          aria-label={`${EXPERIENCE_CONFIG.contact.ctaLabel} en Instagram`}
           className="chapter-body focus-ring group mt-8 inline-flex items-center gap-3 border-b border-white/25 pb-2 font-body text-[11px] uppercase tracking-[0.34em] text-white/80 transition-colors hover:text-[color:var(--turquoise)]"
         >
           {EXPERIENCE_CONFIG.contact.ctaLabel}
