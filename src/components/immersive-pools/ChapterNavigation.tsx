@@ -27,7 +27,7 @@ export function ChapterNavigation({ active, progress }: { active: number; progre
           )}
         </a>
 
-        <nav aria-label="Capítulos" className="hidden items-center gap-4 md:flex">
+        <nav aria-label="Capítulos" className="hidden">
           {chapters.map((chapter, i) => (
             <span key={chapter.id} className="flex items-center gap-4">
               {i > 0 ? <span className="h-[3px] w-[3px] rounded-full bg-white/25" /> : null}
@@ -56,6 +56,25 @@ export function ChapterNavigation({ active, progress }: { active: number; progre
           <span className="h-[9px] w-[9px] rounded-full border border-[#071012]/60 transition-transform duration-300 group-hover:scale-125" />
         </a>
       </header>
+
+      <nav
+        aria-label="Capítulos"
+        className="chapter-jump-nav"
+      >
+        {chapters.map((chapter, i) => (
+          <button
+            key={chapter.id}
+            type="button"
+            onClick={() => goToChapter(i)}
+            aria-current={active === i ? "true" : undefined}
+            className={`focus-ring px-1 font-body text-[8px] uppercase tracking-[0.16em] transition-colors duration-300 ${
+              active === i ? "text-[color:var(--aqua)]" : "text-white/80"
+            }`}
+          >
+            {chapter.nav}
+          </button>
+        ))}
+      </nav>
 
       {/* progress capsules on the far-right grid line */}
       <div

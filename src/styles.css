@@ -189,6 +189,51 @@ html.has-custom-cursor * {
   outline-offset: 4px;
 }
 
+.chapter-jump-nav {
+  position: fixed;
+  inset: 70px 1rem auto;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  min-height: 2rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(245, 245, 242, 0.2);
+  border-radius: 999px;
+  background: rgba(7, 16, 18, 0.8);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(8px);
+}
+
+.chapter-jump-nav button {
+  padding: 0.1rem 0.15rem;
+  color: rgba(255, 255, 255, 0.86);
+  font-family: var(--font-body);
+  font-size: 0.5rem;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.chapter-jump-nav button[aria-current="true"] {
+  color: var(--aqua);
+}
+
+@media (min-width: 768px) {
+  .chapter-jump-nav {
+    inset: 26px auto auto 50%;
+    width: auto;
+    min-width: 25rem;
+    transform: translateX(-50%);
+  }
+
+  .chapter-jump-nav button {
+    font-size: 0.625rem;
+    letter-spacing: 0.24em;
+  }
+}
+
 /* chapter reveal */
 .chapter {
   isolation: isolate;
