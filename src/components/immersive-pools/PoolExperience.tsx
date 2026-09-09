@@ -10,6 +10,7 @@ import { ChapterNavigation } from "./ChapterNavigation";
 import { StoryChapter } from "./StoryChapter";
 import { CustomCursor } from "./CustomCursor";
 import { LoadingExperience } from "./LoadingExperience";
+import { ServicesIndex } from "./ServicesIndex";
 
 /** Chapter visibility windows over normalized scroll. */
 const WINDOWS: [number, number][] = [
@@ -242,6 +243,7 @@ export function PoolExperience() {
 
       {/* scroll driver */}
       <div style={{ height: `${SCROLL_VH}vh` }} aria-hidden />
+      <ServicesIndex />
     </main>
   );
 }
